@@ -15,7 +15,7 @@
       padding: 20px;
     }
     .container {
-      max-width: 1300px;
+      max-width: 1400px;
       margin: 0 auto;
       background: #ffffff;
       padding: 25px;
@@ -60,6 +60,10 @@
     .form-input:focus {
       border-color: #2563eb;
     }
+    .form-input[readonly] {
+      background-color: #e2e8f0;
+      cursor: not-allowed;
+    }
     .form-actions {
       display: flex;
       gap: 10px;
@@ -97,22 +101,34 @@
       background-color: #475569;
     }
     
-    /* Toolbar (Search & Print) */
+    /* Toolbar (Search, Filter & Print) */
     .toolbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 15px;
       gap: 10px;
+      flex-wrap: wrap;
     }
-    .search-input {
-      width: 100%;
-      max-width: 350px;
+    .filter-container {
+      display: flex;
+      gap: 10px;
+      flex: 1;
+      max-width: 600px;
+    }
+    .search-input, .select-filter {
       padding: 10px 14px;
       border: 1px solid #cbd5e1;
       border-radius: 6px;
       font-size: 14px;
       outline: none;
+    }
+    .search-input {
+      flex: 2;
+    }
+    .select-filter {
+      flex: 1;
+      background-color: #fff;
     }
     .btn-print {
       background-color: #0f766e;
@@ -259,6 +275,14 @@
           <label>Monitor Serial No.</label>
           <input type="text" id="monitorSerial" class="form-input" placeholder="Type serial number...">
         </div>
+        <div class="form-group">
+          <label>Start Date</label>
+          <input type="date" id="startDate" class="form-input" onchange="calculateExpiryDate()">
+        </div>
+        <div class="form-group">
+          <label>Expiry Date (+5 Years)</label>
+          <input type="date" id="expiryDate" class="form-input" readonly>
+        </div>
       </div>
       <div class="form-actions">
         <button type="submit" id="submitBtn" class="btn-submit">Add to List</button>
@@ -267,9 +291,16 @@
     </form>
   </div>
 
-  <!-- Search & Print Controls -->
+  <!-- Search, Filter & Print Controls -->
   <div class="toolbar">
-    <input type="text" id="searchInput" class="search-input" placeholder="Search by name, ID, or serial number..." onkeyup="filterTable()">
+    <div class="filter-container">
+      <input type="text" id="searchInput" class="search-input" placeholder="Search by name, ID, or serial..." onkeyup="filterTable()">
+      <select id="statusFilter" class="select-filter" onchange="filterTable()">
+        <option value="ALL">All Records</option>
+        <option value="ASSIGNED">With Laptop/Monitor</option>
+        <option value="NO_ASSET">No Asset Assigned</option>
+      </select>
+    </div>
     <button class="btn-print" onclick="window.print()">
       🖨️ Print Report
     </button>
@@ -286,6 +317,8 @@
           <th class="text-center">Laptop Serial No.</th>
           <th class="text-center">Monitor Model</th>
           <th class="text-center">Monitor Serial No.</th>
+          <th class="text-center">Start Date</th>
+          <th class="text-center">Expiry Date</th>
           <th class="text-center">Status</th>
           <th class="text-center no-print">Action</th>
         </tr>
@@ -310,62 +343,22 @@
 
 <script>
   const initialData = [
-    { id: "E00001", name: "Ibrahim Al Majdouie", laptopM: "-", laptopS: "-", monitorM: "HP LCD ProDisplay P240va", monitorS: "CNK82600G6" },
-    { id: "E00002", name: "Mahmood Alkooheji", laptopM: "Lenovo ThinkCentre Neo 50A / Surface / iPad", laptopS: "MP2DQF58 / 0F00JHM23053BF", monitorM: "HP EliteDisplay E273m", monitorS: "CNC206134L" },
-    { id: "E00003", name: "Hasan AlBinmohamed", laptopM: "HP EliteBook 840", laptopS: "5CG014C8V4", monitorM: "HP LCD ProDisplay P240va", monitorS: "3CM1122YM7" },
-    { id: "E00004", name: "Yasser Alhulw", laptopM: "HP EliteBook 840", laptopS: "5CG90507WB", monitorM: "HP LCD ProDisplay P240va", monitorS: "3CM1122WTB" },
-    { id: "E00005", name: "Asad Abdul Jabbar", laptopM: "HP EliteBook 840 / Dell Latitude", laptopS: "5CG90507YQ / 31B6JX3", monitorM: "-", monitorS: "-" },
-    { id: "E00006", name: "Farouk Kewan", laptopM: "HP EliteBook 840", laptopS: "5CG31916L1", monitorM: "HP LCD ProDisplay P240va", monitorS: "CNK91000KW" },
-    { id: "E00007", name: "Othman Saeed Othman Almurisael", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-" },
-    { id: "E00008", name: "Dilshan Punchihewa", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-" },
-    { id: "E00009", name: "Adi AlShalabi", laptopM: "HP EliteBook 840", laptopS: "5CG0092FS3", monitorM: "HP E24 G4 FHD", monitorS: "CN41461XTL" },
-    { id: "E00010", name: "Hilal Alghamdi", laptopM: "HP ProBook 450", laptopS: "5CD01320GQ", monitorM: "HP ProDisplay P240va", monitorS: "3CM112305H" },
-    { id: "E00011", name: "Abdulaziz Ebdah", laptopM: "HP ProBook 450", laptopS: "5CD2084GR3", monitorM: "HP E24 G4 FHD", monitorS: "CN41461XSB" },
-    { id: "E00012", name: "AL Mutasimbillah Asiri", laptopM: "HP ProBook 450", laptopS: "5CD040BB3R", monitorM: "HP ProDisplay P240va", monitorS: "3CM1123128" },
-    { id: "E00013", name: "Khalid Baser", laptopM: "HP ProBook 450", laptopS: "5CD124S2CN", monitorM: "-", monitorS: "-" },
-    { id: "E00014", name: "Maha Alafaliq", laptopM: "HP ProBook 450", laptopS: "5CD104K4S5", monitorM: "HP ProDisplay P240va", monitorS: "3CM1123124" },
-    { id: "E00016", name: "Loay Elsheikh", laptopM: "HP ProBook 450", laptopS: "5CD104K4WW", monitorM: "HP ProDisplay P240va", monitorS: "1CR1310CF7" },
-    { id: "E00017", name: "Talal AL Enezi", laptopM: "HP ProBook 450", laptopS: "5CD3197S77", monitorM: "HP LCD ProDisplay P240va", monitorS: "CNK8152SN7" },
-    { id: "E00018", name: "Abdulla Alsaudi", laptopM: "HP ProBook 450 G10", laptopS: "1H84141K6G", monitorM: "HP E24 G4 FHD", monitorS: "CN420229MW" },
-    { id: "E00019", name: "Abdulaziz Alghofaily", laptopM: "HP ProBook 450", laptopS: "5CD2183X01", monitorM: "HP P24 G4", monitorS: "CN431302TC" },
-    { id: "E00020", name: "Dhafer Al-Khathami", laptopM: "HP ProBook 450", laptopS: "5CD2084GWN", monitorM: "HP E24 G4 FHD", monitorS: "CN420229MB" },
-    { id: "E00021", name: "Hamzah Aljafri", laptopM: "HP ProBook 450", laptopS: "5CD8352K1P", monitorM: "HP LCD ProDisplay P240va", monitorS: "3CM11230X9" },
-    { id: "E00022", name: "Ahmad Alhadidy", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-" },
-    { id: "E00023", name: "Ghulam Sarwar", laptopM: "HP ProBook 450 G10", laptopS: "1HR5118578", monitorM: "HP P24 G4", monitorS: "CN42371H6M" },
-    { id: "E00024", name: "Nolie Navidad", laptopM: "HP ProBook 450 G9", laptopS: "5CD3197S8L", monitorM: "-", monitorS: "-" },
-    { id: "E00025", name: "Ramzi Al Dossry", laptopM: "ProBook 450 G6", laptopS: "5CD9046M41", monitorM: "Not have", monitorS: "Not have" },
-    { id: "E00027", name: "Shakir Alhamadi", laptopM: "-", laptopS: "-", monitorM: "HP P244 / ProDisplay", monitorS: "CN49510N2H" },
-    { id: "E00029", name: "Mustafa Syed", laptopM: "HP ProBook 450", laptopS: "5CD2084GSG", monitorM: "HP P24 G4", monitorS: "CN42350GBW" },
-    { id: "E00031", name: "Abdullah Algamea", laptopM: "HP ProBook 450 G10", laptopS: "1H84141K8v", monitorM: "HP P24 G4", monitorS: "3CM1122WTB" },
-    { id: "E00032", name: "Ali Alshaerah", laptopM: "HP Desktop 800 (PC)", laptopS: "CZC927BH5F", monitorM: "HP LCD ProDisplay P240va", monitorS: "CNK91000M6" },
-    { id: "E00033", name: "Syed Qassim", laptopM: "HP ProBook 450", laptopS: "5CD2084GPD", monitorM: "HP ProDisplay P240va", monitorS: "1CR13906LD" },
-    { id: "E00035", name: "Ibrahim Alrajeh", laptopM: "HP ProBook 450", laptopS: "5CD01320FV", monitorM: "-", monitorS: "-" },
-    { id: "E00036", name: "Abas Uddin", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-" },
-    { id: "E00037", name: "Abdulkarim Ibrahim Aljuaid", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-" },
-    { id: "E00038", name: "Hathafah Ahmed Alyousef", laptopM: "HP ProBook 450", laptopS: "5CD2183WYT", monitorM: "-", monitorS: "-" },
-    { id: "E00042", name: "Sadam Abdelazim Mostafa Eissa", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-" },
-    { id: "E00044", name: "Saeed Ahmed Saeed Ba Younis", laptopM: "HP ProBook 450 G10", laptopS: "1H84141K7K", monitorM: "Dell U2419H", monitorS: "CN-0K0XJ8-WSL00-012-CCRW-A07" },
-    { id: "E00045", name: "Mohammed Umair Durrani", laptopM: "HP ProBook 450 G8", laptopS: "5CD2183X2X", monitorM: "HP P24 G4", monitorS: "3CM1122WZP" },
-    { id: "E00050", name: "Ahmed Kamal Gad", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-" },
-    { id: "E00051", name: "Hesham Ghourab", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-" },
-    { id: "E00052", name: "Abdulaziz Ali Al Habardi", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-" },
-    { id: "E00053", name: "Abas Uddin", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-" },
-    { id: "E00054", name: "Muhammad Irfan Abdul Manan", laptopM: "HP ProBook 450 G8", laptopS: "5CD2185X01", monitorM: "HP P24 G4", monitorS: "3CM11230W0" },
-    { id: "E00055", name: "Abdullah Mohammed S Alnughmush", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-" },
-    { id: "E00056", name: "Hanan Abdulrahman Almubarak", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-" },
-    { id: "E00057", name: "Abdulelah Abdullah Alomiri", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-" },
-    { id: "E00058", name: "Khaled Mohammed El Badry Hamza", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-" },
-    { id: "E00059", name: "Abdullah Ahmed AboulAbbas", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-" },
-    { id: "E00060", name: "Abdulatif Raed Almobaid", laptopM: "HP ProBook 450 G6", laptopS: "5CD92534Q9", monitorM: "-", monitorS: "-" },
-    { id: "E00061", name: "Ziyad AbuAhmed", laptopM: "ThinkCentre Neo 50a 24 Gen", laptopS: "MP2DQF58", monitorM: "HP P24 G4", monitorS: "3CM1122WTb" },
-    { id: "E00064", name: "Mohammed Almajed", laptopM: "HP EliteBook 840 G5", laptopS: "5CG90507YQ", monitorM: "Not have", monitorS: "Not have" },
-    { id: "E00065", name: "Mohammed Yaseen", laptopM: "HP ProBook 460 G11", laptopS: "1H8511056Q", monitorM: "HP E24m G4", monitorS: "CNC4490JPM" }
+    { id: "E00001", name: "Ibrahim Al Majdouie", laptopM: "-", laptopS: "-", monitorM: "HP LCD ProDisplay P240va", monitorS: "CNK82600G6", startD: "", expiryD: "" },
+    { id: "E00002", name: "Mahmood Alkooheji", laptopM: "Lenovo ThinkCentre Neo 50A / Surface / iPad", laptopS: "MP2DQF58 / 0F00JHM23053BF", monitorM: "HP EliteDisplay E273m", monitorS: "CNC206134L", startD: "", expiryD: "" },
+    { id: "E00003", name: "Hasan AlBinmohamed", laptopM: "HP EliteBook 840", laptopS: "5CG014C8V4", monitorM: "HP LCD ProDisplay P240va", monitorS: "3CM1122YM7", startD: "", expiryD: "" },
+    { id: "E00004", name: "Yasser Alhulw", laptopM: "HP EliteBook 840", laptopS: "5CG90507WB", monitorM: "HP LCD ProDisplay P240va", monitorS: "3CM1122WTB", startD: "", expiryD: "" },
+    { id: "E00005", name: "Asad Abdul Jabbar", laptopM: "HP EliteBook 840 / Dell Latitude", laptopS: "5CG90507YQ / 31B6JX3", monitorM: "-", monitorS: "-", startD: "", expiryD: "" },
+    { id: "E00006", name: "Farouk Kewan", laptopM: "HP EliteBook 840", laptopS: "5CG31916L1", monitorM: "HP LCD ProDisplay P240va", monitorS: "CNK91000KW", startD: "", expiryD: "" },
+    { id: "E00007", name: "Othman Saeed Othman Almurisael", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", startD: "", expiryD: "" },
+    { id: "E00008", name: "Dilshan Punchihewa", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", startD: "", expiryD: "" },
+    { id: "E00009", name: "Adi AlShalabi", laptopM: "HP EliteBook 840", laptopS: "5CG0092FS3", monitorM: "HP E24 G4 FHD", monitorS: "CN41461XTL", startD: "", expiryD: "" },
+    { id: "E00010", name: "Hilal Alghamdi", laptopM: "HP ProBook 450", laptopS: "5CD01320GQ", monitorM: "HP ProDisplay P240va", monitorS: "3CM112305H", startD: "", expiryD: "" }
   ];
 
-  let assets = JSON.parse(localStorage.getItem('assetsData'));
+  let assets = JSON.parse(localStorage.getItem('assetsData_v2'));
   if (!assets || assets.length === 0) {
     assets = initialData;
-    localStorage.setItem('assetsData', JSON.stringify(assets));
+    localStorage.setItem('assetsData_v2', JSON.stringify(assets));
   }
 
   let editIndex = null;
@@ -373,7 +366,23 @@
   document.addEventListener("DOMContentLoaded", renderTable);
 
   function saveToStorage() {
-    localStorage.setItem('assetsData', JSON.stringify(assets));
+    localStorage.setItem('assetsData_v2', JSON.stringify(assets));
+  }
+
+  function calculateExpiryDate() {
+    const startDateInput = document.getElementById("startDate").value;
+    if (startDateInput) {
+      const date = new Date(startDateInput);
+      date.setFullYear(date.getFullYear() + 5);
+      
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      
+      document.getElementById("expiryDate").value = `${year}-${month}-${day}`;
+    } else {
+      document.getElementById("expiryDate").value = "";
+    }
   }
 
   function renderTable() {
@@ -382,13 +391,16 @@
 
     assets.forEach((item, index) => {
       const row = document.createElement("tr");
+      row.setAttribute("data-index", index);
       row.innerHTML = `
         <td class="text-center">${item.id}</td>
         <td>${item.name}</td>
-        <td class="text-center">${item.laptopM}</td>
-        <td class="text-center">${item.laptopS}</td>
-        <td class="text-center">${item.monitorM}</td>
-        <td class="text-center">${item.monitorS}</td>
+        <td class="text-center">${item.laptopM || "-"}</td>
+        <td class="text-center">${item.laptopS || "-"}</td>
+        <td class="text-center">${item.monitorM || "-"}</td>
+        <td class="text-center">${item.monitorS || "-"}</td>
+        <td class="text-center">${item.startD || "-"}</td>
+        <td class="text-center">${item.expiryD || "-"}</td>
         <td class="text-center"><span class="badge badge-active">Active</span></td>
         <td class="text-center no-print">
           <div class="action-btns">
@@ -399,6 +411,7 @@
       `;
       tbody.appendChild(row);
     });
+    filterTable();
   }
 
   function handleFormSubmit(event) {
@@ -410,7 +423,9 @@
       laptopM: document.getElementById("laptopModel").value || "-",
       laptopS: document.getElementById("laptopSerial").value || "-",
       monitorM: document.getElementById("monitorModel").value || "-",
-      monitorS: document.getElementById("monitorSerial").value || "-"
+      monitorS: document.getElementById("monitorSerial").value || "-",
+      startD: document.getElementById("startDate").value || "-",
+      expiryD: document.getElementById("expiryDate").value || "-"
     };
 
     if (editIndex === null) {
@@ -434,6 +449,8 @@
     document.getElementById("laptopSerial").value = item.laptopS === "-" ? "" : item.laptopS;
     document.getElementById("monitorModel").value = item.monitorM === "-" ? "" : item.monitorM;
     document.getElementById("monitorSerial").value = item.monitorS === "-" ? "" : item.monitorS;
+    document.getElementById("startDate").value = item.startD === "-" ? "" : item.startD;
+    document.getElementById("expiryDate").value = item.expiryD === "-" ? "" : item.expiryD;
 
     document.getElementById("formTitle").innerText = "Edit Asset Record";
     const submitBtn = document.getElementById("submitBtn");
@@ -465,19 +482,35 @@
   }
 
   function filterTable() {
-    const input = document.getElementById("searchInput").value.toUpperCase();
-    const trs = document.getElementById("assetTable").getElementsByTagName("tr");
+    const searchVal = document.getElementById("searchInput").value.toUpperCase();
+    const filterVal = document.getElementById("statusFilter").value;
+    const trs = document.getElementById("tableBody").getElementsByTagName("tr");
 
-    for (let i = 1; i < trs.length; i++) {
-      let match = false;
+    for (let i = 0; i < trs.length; i++) {
+      const idx = trs[i].getAttribute("data-index");
+      const item = assets[idx];
+      
+      // Search Logic
+      let matchesSearch = false;
       const tds = trs[i].getElementsByTagName("td");
-      for (let j = 0; j < tds.length - 1; j++) {
-        if (tds[j] && tds[j].innerText.toUpperCase().indexOf(input) > -1) {
-          match = true;
+      for (let j = 0; j < tds.length - 2; j++) {
+        if (tds[j] && tds[j].innerText.toUpperCase().indexOf(searchVal) > -1) {
+          matchesSearch = true;
           break;
         }
       }
-      trs[i].style.display = match ? "" : "none";
+
+      // Filter Logic (Has asset vs No asset)
+      const hasLaptop = item.laptopM && item.laptopM !== "-";
+      const hasMonitor = item.monitorM && item.monitorM !== "-";
+      const hasAsset = hasLaptop || hasMonitor;
+
+      let matchesFilter = true;
+      if (filterVal === "ASSIGNED") matchesFilter = hasAsset;
+      if (filterVal === "NO_ASSET") matchesFilter = !hasAsset;
+
+      // Display or Hide
+      trs[i].style.display = (matchesSearch && matchesFilter) ? "" : "none";
     }
   }
 </script>
