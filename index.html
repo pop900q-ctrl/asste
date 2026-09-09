@@ -26,7 +26,6 @@
       color: #1e293b;
       margin-top: 0;
     }
-    /* Add Form Styling */
     .add-form {
       background: #f8fafc;
       border: 1px solid #e2e8f0;
@@ -101,7 +100,7 @@
       background-color: #475569;
     }
     
-    /* Toolbar (Search, Filter & Print) */
+    /* Toolbar (Search, Filter, Import & Print) */
     .toolbar {
       display: flex;
       justify-content: space-between;
@@ -129,6 +128,26 @@
     .select-filter {
       flex: 1;
       background-color: #fff;
+    }
+    .action-group {
+      display: flex;
+      gap: 10px;
+    }
+    .btn-import {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+    .btn-import:hover {
+      background-color: #1d4ed8;
     }
     .btn-print {
       background-color: #0f766e;
@@ -184,7 +203,6 @@
     }
     .badge-active { background-color: #dcfce7; color: #166534; }
     
-    /* Action Buttons inside Table */
     .action-btns {
       display: flex;
       gap: 6px;
@@ -215,7 +233,6 @@
       background-color: #dc2626;
     }
 
-    /* ================= Print CSS Settings ================= */
     @media print {
       body {
         background-color: #ffffff;
@@ -291,7 +308,7 @@
     </form>
   </div>
 
-  <!-- Search, Filter & Print Controls -->
+  <!-- Search, Filter, Bulk Import & Print Controls -->
   <div class="toolbar">
     <div class="filter-container">
       <input type="text" id="searchInput" class="search-input" placeholder="Search by name, ID, or serial..." onkeyup="filterTable()">
@@ -301,9 +318,15 @@
         <option value="NO_ASSET">No Asset Assigned</option>
       </select>
     </div>
-    <button class="btn-print" onclick="window.print()">
-      🖨️ Print Report
-    </button>
+    <div class="action-group">
+      <input type="file" id="csvFileInput" accept=".csv" style="display: none;" onchange="importCSV(event)">
+      <button class="btn-import" onclick="document.getElementById('csvFileInput').click()">
+        📁 Bulk Import (CSV)
+      </button>
+      <button class="btn-print" onclick="window.print()">
+        🖨️ Print Report
+      </button>
+    </div>
   </div>
 
   <!-- Table -->
@@ -342,31 +365,13 @@
 </datalist>
 
 <script>
-  const initialData = [
-    { id: "E00001", name: "Ibrahim Al Majdouie", laptopM: "-", laptopS: "-", monitorM: "HP LCD ProDisplay P240va", monitorS: "CNK82600G6", startD: "", expiryD: "" },
-    { id: "E00002", name: "Mahmood Alkooheji", laptopM: "Lenovo ThinkCentre Neo 50A / Surface / iPad", laptopS: "MP2DQF58 / 0F00JHM23053BF", monitorM: "HP EliteDisplay E273m", monitorS: "CNC206134L", startD: "", expiryD: "" },
-    { id: "E00003", name: "Hasan AlBinmohamed", laptopM: "HP EliteBook 840", laptopS: "5CG014C8V4", monitorM: "HP LCD ProDisplay P240va", monitorS: "3CM1122YM7", startD: "", expiryD: "" },
-    { id: "E00004", name: "Yasser Alhulw", laptopM: "HP EliteBook 840", laptopS: "5CG90507WB", monitorM: "HP LCD ProDisplay P240va", monitorS: "3CM1122WTB", startD: "", expiryD: "" },
-    { id: "E00005", name: "Asad Abdul Jabbar", laptopM: "HP EliteBook 840 / Dell Latitude", laptopS: "5CG90507YQ / 31B6JX3", monitorM: "-", monitorS: "-", startD: "", expiryD: "" },
-    { id: "E00006", name: "Farouk Kewan", laptopM: "HP EliteBook 840", laptopS: "5CG31916L1", monitorM: "HP LCD ProDisplay P240va", monitorS: "CNK91000KW", startD: "", expiryD: "" },
-    { id: "E00007", name: "Othman Saeed Othman Almurisael", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", startD: "", expiryD: "" },
-    { id: "E00008", name: "Dilshan Punchihewa", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", startD: "", expiryD: "" },
-    { id: "E00009", name: "Adi AlShalabi", laptopM: "HP EliteBook 840", laptopS: "5CG0092FS3", monitorM: "HP E24 G4 FHD", monitorS: "CN41461XTL", startD: "", expiryD: "" },
-    { id: "E00010", name: "Hilal Alghamdi", laptopM: "HP ProBook 450", laptopS: "5CD01320GQ", monitorM: "HP ProDisplay P240va", monitorS: "3CM112305H", startD: "", expiryD: "" }
-  ];
-
-  let assets = JSON.parse(localStorage.getItem('assetsData_v2'));
-  if (!assets || assets.length === 0) {
-    assets = initialData;
-    localStorage.setItem('assetsData_v2', JSON.stringify(assets));
-  }
-
+  let assets = JSON.parse(localStorage.getItem('assetsData_v3')) || [];
   let editIndex = null;
 
   document.addEventListener("DOMContentLoaded", renderTable);
 
   function saveToStorage() {
-    localStorage.setItem('assetsData_v2', JSON.stringify(assets));
+    localStorage.setItem('assetsData_v3', JSON.stringify(assets));
   }
 
   function calculateExpiryDate() {
@@ -439,6 +444,58 @@
     resetFormState();
   }
 
+  /* CSV Import Functionality */
+  function importCSV(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const text = e.target.result;
+      const lines = text.split('\n');
+      let count = 0;
+
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+
+        // Handles standard comma-separated lines
+        const cols = line.split(',').map(col => col.trim().replace(/^"(.*)"$/, '$1'));
+
+        if (cols.length >= 2) {
+          const startD = cols[6] || "-";
+          let expiryD = cols[7] || "-";
+
+          // Calculate 5-year expiry automatically if Start Date exists (YYYY-MM-DD)
+          if (startD !== "-" && !isNaN(Date.parse(startD))) {
+            const d = new Date(startD);
+            d.setFullYear(d.getFullYear() + 5);
+            expiryD = d.toISOString().split('T')[0];
+          }
+
+          assets.push({
+            id: cols[0] || "-",
+            name: cols[1] || "-",
+            laptopM: cols[2] || "-",
+            laptopS: cols[3] || "-",
+            monitorM: cols[4] || "-",
+            monitorS: cols[5] || "-",
+            startD: startD,
+            expiryD: expiryD
+          });
+          count++;
+        }
+      }
+
+      saveToStorage();
+      renderTable();
+      alert(`Successfully imported ${count} user records!`);
+      event.target.value = ''; // Reset input
+    };
+
+    reader.readAsText(file);
+  }
+
   function editRecord(index) {
     editIndex = index;
     const item = assets[index];
@@ -490,7 +547,8 @@
       const idx = trs[i].getAttribute("data-index");
       const item = assets[idx];
       
-      // Search Logic
+      if (!item) continue;
+
       let matchesSearch = false;
       const tds = trs[i].getElementsByTagName("td");
       for (let j = 0; j < tds.length - 2; j++) {
@@ -500,7 +558,6 @@
         }
       }
 
-      // Filter Logic (Has asset vs No asset)
       const hasLaptop = item.laptopM && item.laptopM !== "-";
       const hasMonitor = item.monitorM && item.monitorM !== "-";
       const hasAsset = hasLaptop || hasMonitor;
@@ -509,7 +566,6 @@
       if (filterVal === "ASSIGNED") matchesFilter = hasAsset;
       if (filterVal === "NO_ASSET") matchesFilter = !hasAsset;
 
-      // Display or Hide
       trs[i].style.display = (matchesSearch && matchesFilter) ? "" : "none";
     }
   }
