@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>نظام إدارة الأجهزة والعهود</title>
+  <title>IT Asset & Inventory Management System</title>
   <style>
     * {
       box-sizing: border-box;
@@ -26,7 +26,7 @@
       color: #1e293b;
       margin-top: 0;
     }
-    /* نموذج الإضافة */
+    /* Add Form Styling */
     .add-form {
       background: #f8fafc;
       border: 1px solid #e2e8f0;
@@ -73,7 +73,7 @@
     .btn-add:hover {
       background-color: #1d4ed8;
     }
-    /* البحث */
+    /* Search Styling */
     .search-input {
       width: 100%;
       max-width: 350px;
@@ -84,14 +84,14 @@
       margin-bottom: 15px;
       outline: none;
     }
-    /* الجدول */
+    /* Table Styling */
     .table-container {
       overflow-x: auto;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      text-align: right;
+      text-align: left;
       font-size: 14px;
     }
     th {
@@ -129,73 +129,76 @@
       border-radius: 4px;
       cursor: pointer;
     }
+    .btn-delete:hover {
+      background-color: #dc2626;
+    }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <h1>نظام إدارة الأجهزة والعهود</h1>
+  <h1>IT Asset & Inventory Management</h1>
 
-  <!-- نموذج إضافة جهاز وموظف جديد -->
+  <!-- Form to Add New Asset & Employee -->
   <div class="add-form">
-    <h2>إضافة عهدة جديدة</h2>
+    <h2>Add New Asset Record</h2>
     <form id="assetForm" onsubmit="addRecord(event)">
       <div class="form-grid">
         <div class="form-group">
-          <label>الرقم الوظيفي (ID)</label>
+          <label>Employee ID</label>
           <input type="text" id="empId" class="form-input" placeholder="E00001" required>
         </div>
         <div class="form-group">
-          <label>اسم الموظف</label>
-          <input type="text" id="empName" class="form-input" placeholder="اسم الموظف" required>
+          <label>Employee Name</label>
+          <input type="text" id="empName" class="form-input" placeholder="John Doe" required>
         </div>
         <div class="form-group">
-          <label>موديل اللابتوب</label>
-          <input type="text" id="laptopModel" class="form-input" list="laptop-models" placeholder="اختر أو اكتب الموديل...">
+          <label>Laptop Model</label>
+          <input type="text" id="laptopModel" class="form-input" list="laptop-models" placeholder="Select or type model...">
         </div>
         <div class="form-group">
-          <label>السيريال نمبر للابتوب</label>
-          <input type="text" id="laptopSerial" class="form-input" placeholder="اكتب السيريال...">
+          <label>Laptop Serial No.</label>
+          <input type="text" id="laptopSerial" class="form-input" placeholder="Type serial number...">
         </div>
         <div class="form-group">
-          <label>موديل الشاشة</label>
-          <input type="text" id="monitorModel" class="form-input" list="monitor-models" placeholder="اختر أو اكتب الموديل...">
+          <label>Monitor Model</label>
+          <input type="text" id="monitorModel" class="form-input" list="monitor-models" placeholder="Select or type model...">
         </div>
         <div class="form-group">
-          <label>السيريال نمبر للشاشة</label>
-          <input type="text" id="monitorSerial" class="form-input" placeholder="اكتب السيريال...">
+          <label>Monitor Serial No.</label>
+          <input type="text" id="monitorSerial" class="form-input" placeholder="Type serial number...">
         </div>
       </div>
-      <button type="submit" class="btn-add">إضافة إلى القائمة</button>
+      <button type="submit" class="btn-add">Add to List</button>
     </form>
   </div>
 
-  <!-- خيار البحث -->
-  <input type="text" id="searchInput" class="search-input" placeholder="بحث بالاسم، الرقم الوظيفي، أو السيريال..." onkeyup="filterTable()">
+  <!-- Search Input -->
+  <input type="text" id="searchInput" class="search-input" placeholder="Search by name, ID, or serial number..." onkeyup="filterTable()">
 
-  <!-- الجدول -->
+  <!-- Table -->
   <div class="table-container">
     <table id="assetTable">
       <thead>
         <tr>
-          <th class="text-center">الرقم الوظيفي</th>
-          <th>اسم الموظف</th>
-          <th class="text-center">موديل اللابتوب</th>
-          <th class="text-center">سيريال اللابتوب</th>
-          <th class="text-center">موديل الشاشة</th>
-          <th class="text-center">سيريال الشاشة</th>
-          <th class="text-center">الحالة</th>
-          <th class="text-center">إجراء</th>
+          <th class="text-center">Employee ID</th>
+          <th>Employee Name</th>
+          <th class="text-center">Laptop Model</th>
+          <th class="text-center">Laptop Serial No.</th>
+          <th class="text-center">Monitor Model</th>
+          <th class="text-center">Monitor Serial No.</th>
+          <th class="text-center">Status</th>
+          <th class="text-center">Action</th>
         </tr>
       </thead>
       <tbody id="tableBody">
-        <!-- يتم إدخال الصفوف هنا ديناميكياً -->
+        <!-- Rows will be dynamically added here -->
       </tbody>
     </table>
   </div>
 </div>
 
-<!-- اقتراحات موديلات اللابتوب -->
+<!-- Laptop Model Suggestions -->
 <datalist id="laptop-models">
   <option value="Dell Latitude 5430">
   <option value="HP EliteBook 840 G8">
@@ -203,7 +206,7 @@
   <option value="MacBook Pro 14&quot;">
 </datalist>
 
-<!-- اقتراحات موديلات الشاشات -->
+<!-- Monitor Model Suggestions -->
 <datalist id="monitor-models">
   <option value="Dell P2419H">
   <option value="HP E24 G4">
@@ -211,7 +214,7 @@
 </datalist>
 
 <script>
-  // إضافة صف جديد للجدول
+  // Add new row to the table
   function addRecord(event) {
     event.preventDefault();
 
@@ -232,21 +235,21 @@
       <td class="text-center">${laptopS}</td>
       <td class="text-center">${monitorM}</td>
       <td class="text-center">${monitorS}</td>
-      <td class="text-center"><span class="badge badge-active">نشط</span></td>
-      <td class="text-center"><button class="btn-delete" onclick="deleteRow(this)">حذف</button></td>
+      <td class="text-center"><span class="badge badge-active">Active</span></td>
+      <td class="text-center"><button class="btn-delete" onclick="deleteRow(this)">Delete</button></td>
     `;
 
     tbody.appendChild(row);
     document.getElementById("assetForm").reset();
   }
 
-  // حذف صف
+  // Delete a row
   function deleteRow(btn) {
     const row = btn.parentNode.parentNode;
     row.parentNode.removeChild(row);
   }
 
-  // فلترة وبحث بالجدول
+  // Filter and search table records
   function filterTable() {
     const input = document.getElementById("searchInput").value.toUpperCase();
     const trs = document.getElementById("assetTable").getElementsByTagName("tr");
