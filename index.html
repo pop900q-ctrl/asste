@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IT Asset Management</title>
+  <title>IT Asset Inventory Management</title>
   <style>
     * {
       box-sizing: border-box;
@@ -15,7 +15,7 @@
       padding: 20px;
     }
     .container {
-      max-width: 1200px;
+      max-width: 1300px;
       margin: 0 auto;
       background: #ffffff;
       padding: 25px;
@@ -61,7 +61,7 @@
       white-space: nowrap;
     }
     td {
-      padding: 10px 12px;
+      padding: 8px 10px;
       border-bottom: 1px solid #e2e8f0;
       color: #334155;
     }
@@ -74,6 +74,20 @@
     .text-center {
       text-align: center;
     }
+    /* Editable input fields styling inside table */
+    .table-input {
+      width: 100%;
+      padding: 6px 8px;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      font-size: 13px;
+      background-color: #ffffff;
+    }
+    .table-input:focus {
+      border-color: #2563eb;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    }
     .badge {
       padding: 4px 8px;
       border-radius: 12px;
@@ -83,7 +97,6 @@
     }
     .badge-active { background-color: #dcfce7; color: #166534; }
     .badge-maintenance { background-color: #fef3c7; color: #92400e; }
-    .badge-unassigned { background-color: #f1f5f9; color: #475569; }
   </style>
 </head>
 <body>
@@ -92,7 +105,7 @@
   <h1>IT Asset Inventory Management</h1>
   
   <div class="controls">
-    <input type="text" id="searchInput" class="search-input" placeholder="Search by name or ID..." onkeyup="filterTable()">
+    <input type="text" id="searchInput" class="search-input" placeholder="Search by name, ID, model, or serial..." onkeyup="filterTable()">
   </div>
 
   <div class="table-container">
@@ -101,10 +114,10 @@
         <tr>
           <th class="text-center">ID</th>
           <th>Employee Name</th>
-          <th class="text-center">Laptop Model</th>
-          <th class="text-center">Laptop Serial No.</th>
-          <th class="text-center">Monitor Model</th>
-          <th class="text-center">Monitor Serial No.</th>
+          <th>Laptop Model</th>
+          <th>Laptop Serial No.</th>
+          <th>Monitor Model</th>
+          <th>Monitor Serial No.</th>
           <th class="text-center">Status</th>
         </tr>
       </thead>
@@ -112,53 +125,81 @@
         <tr>
           <td class="text-center">E00001</td>
           <td>Ibrahim Al Majdouie</td>
-          <td class="text-center">Dell Latitude 5430</td>
-          <td class="text-center">SN-982314</td>
-          <td class="text-center">Dell P2419H</td>
-          <td class="text-center">MON-11234</td>
+          <td><input type="text" class="table-input" list="laptop-models" value="Dell Latitude 5430" placeholder="Select or type model..."></td>
+          <td><input type="text" class="table-input" list="laptop-serials" value="SN-982314" placeholder="Select or type serial..."></td>
+          <td><input type="text" class="table-input" list="monitor-models" value="Dell P2419H" placeholder="Select or type model..."></td>
+          <td><input type="text" class="table-input" list="monitor-serials" value="MON-11234" placeholder="Select or type serial..."></td>
           <td class="text-center"><span class="badge badge-active">Active</span></td>
         </tr>
         <tr>
           <td class="text-center">E00002</td>
           <td>Mahmood Alkooheji</td>
-          <td class="text-center">HP EliteBook 840</td>
-          <td class="text-center">SN-445129</td>
-          <td class="text-center">HP E24 G4</td>
-          <td class="text-center">MON-55921</td>
+          <td><input type="text" class="table-input" list="laptop-models" value="HP EliteBook 840" placeholder="Select or type model..."></td>
+          <td><input type="text" class="table-input" list="laptop-serials" value="SN-445129" placeholder="Select or type serial..."></td>
+          <td><input type="text" class="table-input" list="monitor-models" value="HP E24 G4" placeholder="Select or type model..."></td>
+          <td><input type="text" class="table-input" list="monitor-serials" value="MON-55921" placeholder="Select or type serial..."></td>
           <td class="text-center"><span class="badge badge-active">Active</span></td>
         </tr>
         <tr>
           <td class="text-center">E00003</td>
           <td>Hasan AlBinmohamed</td>
-          <td class="text-center">Lenovo ThinkPad T14</td>
-          <td class="text-center">SN-881203</td>
-          <td class="text-center">Dell P2419H</td>
-          <td class="text-center">MON-11982</td>
+          <td><input type="text" class="table-input" list="laptop-models" value="Lenovo ThinkPad T14" placeholder="Select or type model..."></td>
+          <td><input type="text" class="table-input" list="laptop-serials" value="SN-881203" placeholder="Select or type serial..."></td>
+          <td><input type="text" class="table-input" list="monitor-models" value="Dell P2419H" placeholder="Select or type model..."></td>
+          <td><input type="text" class="table-input" list="monitor-serials" value="MON-11982" placeholder="Select or type serial..."></td>
           <td class="text-center"><span class="badge badge-active">Active</span></td>
         </tr>
         <tr>
           <td class="text-center">E00004</td>
           <td>Yasser Alhulw</td>
-          <td class="text-center">MacBook Pro 14"</td>
-          <td class="text-center">SN-332190</td>
-          <td class="text-center">LG UltraFine 27</td>
-          <td class="text-center">MON-99812</td>
+          <td><input type="text" class="table-input" list="laptop-models" value="MacBook Pro 14&quot;" placeholder="Select or type model..."></td>
+          <td><input type="text" class="table-input" list="laptop-serials" value="SN-332190" placeholder="Select or type serial..."></td>
+          <td><input type="text" class="table-input" list="monitor-models" value="LG UltraFine 27" placeholder="Select or type model..."></td>
+          <td><input type="text" class="table-input" list="monitor-serials" value="MON-99812" placeholder="Select or type serial..."></td>
           <td class="text-center"><span class="badge badge-maintenance">Maintenance</span></td>
-        </tr>
-        <tr>
-          <td class="text-center">E00005</td>
-          <td>Asad Abdul Jabbar</td>
-          <td class="text-center">Dell Latitude 5430</td>
-          <td class="text-center">SN-776210</td>
-          <td class="text-center">-</td>
-          <td class="text-center">-</td>
-          <td class="text-center"><span class="badge badge-active">Active</span></td>
         </tr>
       </tbody>
     </table>
   </div>
 </div>
 
+<!-- ================= Predefined Lists ================= -->
+
+<!-- Laptop Models List -->
+<datalist id="laptop-models">
+  <option value="Dell Latitude 5430">
+  <option value="HP EliteBook 840 G8">
+  <option value="Lenovo ThinkPad T14">
+  <option value="MacBook Pro 14&quot;">
+  <option value="MacBook Air M2">
+</datalist>
+
+<!-- Laptop Serial Numbers List -->
+<datalist id="laptop-serials">
+  <option value="SN-982314">
+  <option value="SN-445129">
+  <option value="SN-881203">
+  <option value="SN-332190">
+  <option value="SN-776210">
+</datalist>
+
+<!-- Monitor Models List -->
+<datalist id="monitor-models">
+  <option value="Dell P2419H">
+  <option value="HP E24 G4">
+  <option value="LG UltraFine 27">
+  <option value="Samsung Odyssey G5">
+</datalist>
+
+<!-- Monitor Serial Numbers List -->
+<datalist id="monitor-serials">
+  <option value="MON-11234">
+  <option value="MON-55921">
+  <option value="MON-11982">
+  <option value="MON-99812">
+</datalist>
+
+<!-- Search Logic Script -->
 <script>
   function filterTable() {
     const input = document.getElementById("searchInput").value.toUpperCase();
@@ -166,19 +207,27 @@
     const trs = table.getElementsByTagName("tr");
 
     for (let i = 1; i < trs.length; i++) {
-      const idCol = trs[i].getElementsByTagName("td")[0];
-      const nameCol = trs[i].getElementsByTagName("td")[1];
-      
-      if (idCol || nameCol) {
-        const idText = idCol.textContent || idCol.innerText;
-        const nameText = nameCol.textContent || nameCol.innerText;
+      let rowMatch = false;
+      const cells = trs[i].getElementsByTagName("td");
+
+      for (let j = 0; j < cells.length; j++) {
+        // Read either cell text or input field value
+        let cellValue = "";
+        const inputElem = cells[j].querySelector("input");
         
-        if (idText.toUpperCase().indexOf(input) > -1 || nameText.toUpperCase().indexOf(input) > -1) {
-          trs[i].style.display = "";
+        if (inputElem) {
+          cellValue = inputElem.value;
         } else {
-          trs[i].style.display = "none";
+          cellValue = cells[j].textContent || cells[j].innerText;
+        }
+
+        if (cellValue.toUpperCase().indexOf(input) > -1) {
+          rowMatch = true;
+          break;
         }
       }
+
+      trs[i].style.display = rowMatch ? "" : "none";
     }
   }
 </script>
