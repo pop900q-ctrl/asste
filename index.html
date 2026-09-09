@@ -15,7 +15,7 @@
       padding: 20px;
     }
     .container {
-      max-width: 1300px;
+      max-width: 1400px;
       margin: 0 auto;
       background: #ffffff;
       padding: 25px;
@@ -26,7 +26,6 @@
       color: #1e293b;
       margin-top: 0;
     }
-    /* Add Form Styling */
     .add-form {
       background: #f8fafc;
       border: 1px solid #e2e8f0;
@@ -36,7 +35,7 @@
     }
     .form-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
       gap: 12px;
       margin-bottom: 15px;
     }
@@ -97,7 +96,6 @@
       background-color: #475569;
     }
     
-    /* Toolbar (Search & Print) */
     .toolbar {
       display: flex;
       justify-content: space-between;
@@ -131,7 +129,6 @@
       background-color: #0d9488;
     }
 
-    /* Table Styling */
     .table-container {
       overflow-x: auto;
     }
@@ -139,36 +136,30 @@
       width: 100%;
       border-collapse: collapse;
       text-align: left;
-      font-size: 14px;
+      font-size: 13px;
     }
     th {
       background-color: #1e293b;
       color: #ffffff;
-      padding: 12px;
+      padding: 10px;
       font-weight: 600;
       white-space: nowrap;
     }
     td {
-      padding: 10px 12px;
+      padding: 8px 10px;
       border-bottom: 1px solid #e2e8f0;
       color: #334155;
     }
     tr:nth-child(even) {
       background-color: #f8fafc;
     }
+    .highlight-row {
+      background-color: #fef08a !important;
+    }
     .text-center {
       text-align: center;
     }
-    .badge {
-      padding: 4px 8px;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: 600;
-      display: inline-block;
-    }
-    .badge-active { background-color: #dcfce7; color: #166534; }
     
-    /* Action Buttons inside Table */
     .action-btns {
       display: flex;
       gap: 6px;
@@ -199,7 +190,6 @@
       background-color: #dc2626;
     }
 
-    /* ================= Print CSS Settings ================= */
     @media print {
       body {
         background-color: #ffffff;
@@ -245,19 +235,27 @@
         </div>
         <div class="form-group">
           <label>Laptop Model</label>
-          <input type="text" id="laptopModel" class="form-input" list="laptop-models" placeholder="Select or type model...">
+          <input type="text" id="laptopModel" class="form-input" list="laptop-models" placeholder="Select or type...">
         </div>
         <div class="form-group">
           <label>Laptop Serial No.</label>
-          <input type="text" id="laptopSerial" class="form-input" placeholder="Type serial number...">
+          <input type="text" id="laptopSerial" class="form-input" placeholder="Type serial...">
         </div>
         <div class="form-group">
           <label>Monitor Model</label>
-          <input type="text" id="monitorModel" class="form-input" list="monitor-models" placeholder="Select or type model...">
+          <input type="text" id="monitorModel" class="form-input" list="monitor-models" placeholder="Select or type...">
         </div>
         <div class="form-group">
           <label>Monitor Serial No.</label>
-          <input type="text" id="monitorSerial" class="form-input" placeholder="Type serial number...">
+          <input type="text" id="monitorSerial" class="form-input" placeholder="Type serial...">
+        </div>
+        <div class="form-group">
+          <label>Status / Date</label>
+          <input type="text" id="statusDate" class="form-input" placeholder="e.g. 25-Jul-24">
+        </div>
+        <div class="form-group">
+          <label>Issue Date / Expiry</label>
+          <input type="text" id="issueDate" class="form-input" placeholder="e.g. 2029-07-25">
         </div>
       </div>
       <div class="form-actions">
@@ -269,7 +267,7 @@
 
   <!-- Search & Print Controls -->
   <div class="toolbar">
-    <input type="text" id="searchInput" class="search-input" placeholder="Search by name, ID, or serial number..." onkeyup="filterTable()">
+    <input type="text" id="searchInput" class="search-input" placeholder="Search by name, ID, model, or serial..." onkeyup="filterTable()">
     <button class="btn-print" onclick="window.print()">
       🖨️ Print Report
     </button>
@@ -280,13 +278,14 @@
     <table id="assetTable">
       <thead>
         <tr>
-          <th class="text-center">Employee ID</th>
-          <th>Employee Name</th>
+          <th class="text-center">ID</th>
+          <th>Name</th>
           <th class="text-center">Laptop Model</th>
-          <th class="text-center">Laptop Serial No.</th>
+          <th class="text-center">Serial Number</th>
           <th class="text-center">Monitor Model</th>
-          <th class="text-center">Monitor Serial No.</th>
+          <th class="text-center">Serial Number</th>
           <th class="text-center">Status</th>
+          <th class="text-center">Issue Date</th>
           <th class="text-center no-print">Action</th>
         </tr>
       </thead>
@@ -296,21 +295,82 @@
 </div>
 
 <datalist id="laptop-models">
-  <option value="Dell Latitude 5430">
-  <option value="HP EliteBook 840 G8">
-  <option value="Lenovo ThinkPad T14">
-  <option value="MacBook Pro 14&quot;">
+  <option value="HP ProBook 450 g10">
+  <option value="HP ProBook 450 G9">
+  <option value="ProBook 450 G6">
+  <option value="HP ProBook 450 G8">
+  <option value="HP ProBook 460 G11">
+  <option value="ThinkCentre neo 50a 24 gen">
+  <option value="Hp EliteBook 840 G5">
 </datalist>
 
 <datalist id="monitor-models">
-  <option value="Dell P2419H">
-  <option value="HP E24 G4">
-  <option value="LG UltraFine 27">
+  <option value="HP E24 G4 FHD">
+  <option value="HP P244">
+  <option value="HP P24 G4">
+  <option value="Dell U2419H">
+  <option value="HP E24m G4">
 </datalist>
 
 <script>
-  let assets = JSON.parse(localStorage.getItem('assetsData')) || [];
-  let editIndex = null; // Variable to keep track of record being edited
+  // Default data from your spreadsheet image
+  const defaultAssets = [
+    { id: "E00001", name: "Ibrahim Al Majdouie", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00002", name: "Mahmood Alkooheji", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00003", name: "Hasan AlBinmohamed", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00004", name: "Yasser Alhulw", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00005", name: "Asad Abdul Jabbar", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00006", name: "Farouk Kewan", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00007", name: "Othman Saeed Othman Almurisael", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00008", name: "Dilshan Punchihewa", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00010", name: "Hilal Alghamdi", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00011", name: "Abdulaziz Ebdah", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00012", name: "AL Mutasimbillah Asiri", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00013", name: "Khalid Baser", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00014", name: "Maha Alafaliq", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00016", name: "Loay Elsheikh", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00017", name: "Talal AL Enezi", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00018", name: "Abdulla Alsaudi", laptopM: "HP ProBook 450 g10", laptopS: "1H84141K6G", monitorM: "HP E24 G4 FHD", monitorS: "CN420229MW", status: "25-Jul-24", issue: "2029-07-25", highlight: true },
+    { id: "E00019", name: "Abdulaziz Alghofaily", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00020", name: "Dhafer Al-Khathami", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00021", name: "Hamzah Aljafri", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00022", name: "Ahmad Alhadidy", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00023", name: "Ghulam Sarwar", laptopM: "HP ProBook 450 G10", laptopS: "1HR5118578", monitorM: "-", monitorS: "-", status: "-", issue: "-", highlight: true },
+    { id: "E00024", name: "Nolie Navidad", laptopM: "HP ProBook 450 G9", laptopS: "5CD3197S8L", monitorM: "-", monitorS: "-", status: "6-Aug-23", issue: "2028-08-06" },
+    { id: "E00025", name: "Ramzi Al Dossry", laptopM: "ProBook 450 G6", laptopS: "5CD9046M41", monitorM: "Not have", monitorS: "Not have", status: "30-Jan-19", issue: "2024-01-30" },
+    { id: "E00027", name: "Shakir Alhamadi", laptopM: "-", laptopS: "-", monitorM: "HP P244", monitorS: "CN49510N2H", status: "-", issue: "-" },
+    { id: "E00029", name: "Mustafa Syed", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00031", name: "Abdullah Algamea", laptopM: "HP ProBook 450 g10", laptopS: "1H84141K8v", monitorM: "HP P24 G4", monitorS: "3CM1122WTB", status: "14-Nov-24", issue: "2029-11-14", highlight: true },
+    { id: "E00032", name: "-", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00033", name: "Syed Qassim", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00035", name: "Ibrahim Alrajeh", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00038", name: "Hathafah Ahmed Alyousef", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00042", name: "Sadam Abdelazim Mostafa Eissa", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00044", name: "Saeed Ahmed Saeed Ba Younis", laptopM: "HP ProBook 450 G10", laptopS: "1H84141K7K", monitorM: "Dell U2419H", monitorS: "CN-0K0XJ8-WSL00-012-CCRW-A07", status: "14-Nov-24", issue: "2029-11-14", highlight: true },
+    { id: "E00045", name: "Mohammed Umair Durrani", laptopM: "HP ProBook 450 G8", laptopS: "5CD2183X2X", monitorM: "HP P24 G4", monitorS: "3CM1122WZP", status: "17-May-23", issue: "2028-05-17", highlight: true },
+    { id: "E00050", name: "Ahmed Kamal Gad", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00051", name: "Hesham Ghourab", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00052", name: "Abdulaziz Ali Al Habardi", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00053", name: "Abas Uddin", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00054", name: "Muhammad Irfan Abdul Manan", laptopM: "HP ProBook 450 G8", laptopS: "5CD2185X01", monitorM: "HP P24 G4", monitorS: "3CM11230W0", status: "1-Jun-22", issue: "2027-06-01", highlight: true },
+    { id: "E00055", name: "Abdullah Mohammed S Alnughmush", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00056", name: "Hanan Abdulrahman Almubarak", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00057", name: "Abdulelah Abdullah Alomiri", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00058", name: "Khaled Mohammed El Badry Hamza", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00059", name: "Abdullah Ahmed AboulAbbas", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", status: "-", issue: "-" },
+    { id: "E00060", name: "Abdulatif Raed Almobaid", laptopM: "HP ProBook 450 G6", laptopS: "5CD92534Q9", monitorM: "-", monitorS: "-", status: "21-Jun-19", issue: "2024-06-21", highlight: true },
+    { id: "E00061", name: "Ziyad AbuAhmed", laptopM: "ThinkCentre neo 50a 24 gen", laptopS: "MP2DQF58", monitorM: "HP P24 G4", monitorS: "3CM1122WTb", status: "-", issue: "-", highlight: true },
+    { id: "E00064", name: "Mohammed Almajed", laptopM: "Hp EliteBook 840 G5", laptopS: "5CG90507YQ", monitorM: "Not have", monitorS: "Not have", status: "30-Jan-19", issue: "2024-01-30", highlight: true },
+    { id: "E00065", name: "Mohammed Yaseen", laptopM: "HP ProBook 460 G11", laptopS: "1H8511056Q", monitorM: "HP E24m G4", monitorS: "CNC4490JPM", status: "-", issue: "-", highlight: true }
+  ];
+
+  let assets = JSON.parse(localStorage.getItem('assetsData'));
+  if (!assets || assets.length === 0) {
+    assets = defaultAssets;
+    localStorage.setItem('assetsData', JSON.stringify(assets));
+  }
+
+  let editIndex = null;
 
   document.addEventListener("DOMContentLoaded", renderTable);
 
@@ -324,6 +384,10 @@
 
     assets.forEach((item, index) => {
       const row = document.createElement("tr");
+      if (item.highlight) {
+        row.classList.add("highlight-row");
+      }
+
       row.innerHTML = `
         <td class="text-center">${item.id}</td>
         <td>${item.name}</td>
@@ -331,7 +395,8 @@
         <td class="text-center">${item.laptopS}</td>
         <td class="text-center">${item.monitorM}</td>
         <td class="text-center">${item.monitorS}</td>
-        <td class="text-center"><span class="badge badge-active">Active</span></td>
+        <td class="text-center">${item.status}</td>
+        <td class="text-center">${item.issue}</td>
         <td class="text-center no-print">
           <div class="action-btns">
             <button class="btn-edit" onclick="editRecord(${index})">Edit</button>
@@ -352,14 +417,15 @@
       laptopM: document.getElementById("laptopModel").value || "-",
       laptopS: document.getElementById("laptopSerial").value || "-",
       monitorM: document.getElementById("monitorModel").value || "-",
-      monitorS: document.getElementById("monitorSerial").value || "-"
+      monitorS: document.getElementById("monitorSerial").value || "-",
+      status: document.getElementById("statusDate").value || "-",
+      issue: document.getElementById("issueDate").value || "-",
+      highlight: editIndex !== null ? assets[editIndex].highlight : false
     };
 
     if (editIndex === null) {
-      // Create New Record
       assets.push(recordData);
     } else {
-      // Update Existing Record
       assets[editIndex] = recordData;
     }
 
@@ -372,22 +438,21 @@
     editIndex = index;
     const item = assets[index];
 
-    // Populate input fields with record values
     document.getElementById("empId").value = item.id;
-    document.getElementById("empName").value = item.name;
+    document.getElementById("empName").value = item.name === "-" ? "" : item.name;
     document.getElementById("laptopModel").value = item.laptopM === "-" ? "" : item.laptopM;
     document.getElementById("laptopSerial").value = item.laptopS === "-" ? "" : item.laptopS;
     document.getElementById("monitorModel").value = item.monitorM === "-" ? "" : item.monitorM;
     document.getElementById("monitorSerial").value = item.monitorS === "-" ? "" : item.monitorS;
+    document.getElementById("statusDate").value = item.status === "-" ? "" : item.status;
+    document.getElementById("issueDate").value = item.issue === "-" ? "" : item.issue;
 
-    // Change Form UI to Edit Mode
     document.getElementById("formTitle").innerText = "Edit Asset Record";
     const submitBtn = document.getElementById("submitBtn");
     submitBtn.innerText = "Update Record";
     submitBtn.classList.add("btn-update");
     document.getElementById("cancelBtn").style.display = "inline-block";
 
-    // Scroll to form smoothly
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
