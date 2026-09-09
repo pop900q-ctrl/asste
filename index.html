@@ -26,7 +26,6 @@
       color: #1e293b;
       margin-top: 0;
     }
-    /* Add Form Styling */
     .add-form {
       background: #f8fafc;
       border: 1px solid #e2e8f0;
@@ -73,7 +72,6 @@
     .btn-add:hover {
       background-color: #1d4ed8;
     }
-    /* Search Styling */
     .search-input {
       width: 100%;
       max-width: 350px;
@@ -84,7 +82,6 @@
       margin-bottom: 15px;
       outline: none;
     }
-    /* Table Styling */
     .table-container {
       overflow-x: auto;
     }
@@ -120,7 +117,6 @@
       display: inline-block;
     }
     .badge-active { background-color: #dcfce7; color: #166534; }
-    .badge-maintenance { background-color: #fef3c7; color: #92400e; }
     .btn-delete {
       background-color: #ef4444;
       color: white;
@@ -139,7 +135,7 @@
 <div class="container">
   <h1>IT Asset & Inventory Management</h1>
 
-  <!-- Form to Add New Asset & Employee -->
+  <!-- Form to Add New Asset -->
   <div class="add-form">
     <h2>Add New Asset Record</h2>
     <form id="assetForm" onsubmit="addRecord(event)">
@@ -191,14 +187,11 @@
           <th class="text-center">Action</th>
         </tr>
       </thead>
-      <tbody id="tableBody">
-        <!-- Rows will be dynamically added here -->
-      </tbody>
+      <tbody id="tableBody"></tbody>
     </table>
   </div>
 </div>
 
-<!-- Laptop Model Suggestions -->
 <datalist id="laptop-models">
   <option value="Dell Latitude 5430">
   <option value="HP EliteBook 840 G8">
@@ -206,7 +199,6 @@
   <option value="MacBook Pro 14&quot;">
 </datalist>
 
-<!-- Monitor Model Suggestions -->
 <datalist id="monitor-models">
   <option value="Dell P2419H">
   <option value="HP E24 G4">
@@ -214,42 +206,59 @@
 </datalist>
 
 <script>
-  // Add new row to the table
+  let assets = JSON.parse(localStorage.getItem('assetsData')) || [];
+
+  // Load data when page opens
+  document.addEventListener("DOMContentLoaded", renderTable);
+
+  function saveToStorage() {
+    localStorage.setItem('assetsData', JSON.stringify(assets));
+  }
+
+  function renderTable() {
+    const tbody = document.getElementById("tableBody");
+    tbody.innerHTML = "";
+
+    assets.forEach((item, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td class="text-center">${item.id}</td>
+        <td>${item.name}</td>
+        <td class="text-center">${item.laptopM}</td>
+        <td class="text-center">${item.laptopS}</td>
+        <td class="text-center">${item.monitorM}</td>
+        <td class="text-center">${item.monitorS}</td>
+        <td class="text-center"><span class="badge badge-active">Active</span></td>
+        <td class="text-center"><button class="btn-delete" onclick="deleteRecord(${index})">Delete</button></td>
+      `;
+      tbody.appendChild(row);
+    });
+  }
+
   function addRecord(event) {
     event.preventDefault();
 
-    const id = document.getElementById("empId").value;
-    const name = document.getElementById("empName").value;
-    const laptopM = document.getElementById("laptopModel").value || "-";
-    const laptopS = document.getElementById("laptopSerial").value || "-";
-    const monitorM = document.getElementById("monitorModel").value || "-";
-    const monitorS = document.getElementById("monitorSerial").value || "-";
+    const newAsset = {
+      id: document.getElementById("empId").value,
+      name: document.getElementById("empName").value,
+      laptopM: document.getElementById("laptopModel").value || "-",
+      laptopS: document.getElementById("laptopSerial").value || "-",
+      monitorM: document.getElementById("monitorModel").value || "-",
+      monitorS: document.getElementById("monitorSerial").value || "-"
+    };
 
-    const tbody = document.getElementById("tableBody");
-    const row = document.createElement("tr");
-
-    row.innerHTML = `
-      <td class="text-center">${id}</td>
-      <td>${name}</td>
-      <td class="text-center">${laptopM}</td>
-      <td class="text-center">${laptopS}</td>
-      <td class="text-center">${monitorM}</td>
-      <td class="text-center">${monitorS}</td>
-      <td class="text-center"><span class="badge badge-active">Active</span></td>
-      <td class="text-center"><button class="btn-delete" onclick="deleteRow(this)">Delete</button></td>
-    `;
-
-    tbody.appendChild(row);
+    assets.push(newAsset);
+    saveToStorage();
+    renderTable();
     document.getElementById("assetForm").reset();
   }
 
-  // Delete a row
-  function deleteRow(btn) {
-    const row = btn.parentNode.parentNode;
-    row.parentNode.removeChild(row);
+  function deleteRecord(index) {
+    assets.splice(index, 1);
+    saveToStorage();
+    renderTable();
   }
 
-  // Filter and search table records
   function filterTable() {
     const input = document.getElementById("searchInput").value.toUpperCase();
     const trs = document.getElementById("assetTable").getElementsByTagName("tr");
