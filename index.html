@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IT Asset Inventory Management</title>
+  <title>نظام إدارة الأجهزة والعهود</title>
   <style>
     * {
       box-sizing: border-box;
@@ -22,16 +22,58 @@
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
-    h1 {
-      margin-top: 0;
+    h1, h2 {
       color: #1e293b;
+      margin-top: 0;
     }
-    .controls {
+    /* نموذج الإضافة */
+    .add-form {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 25px;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+    .form-group {
       display: flex;
-      justify-content: space-between;
-      margin-bottom: 20px;
-      gap: 10px;
+      flex-direction: column;
+      gap: 5px;
     }
+    .form-group label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #475569;
+    }
+    .form-input {
+      padding: 8px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 14px;
+      outline: none;
+    }
+    .form-input:focus {
+      border-color: #2563eb;
+    }
+    .btn-add {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-add:hover {
+      background-color: #1d4ed8;
+    }
+    /* البحث */
     .search-input {
       width: 100%;
       max-width: 350px;
@@ -39,18 +81,17 @@
       border: 1px solid #cbd5e1;
       border-radius: 6px;
       font-size: 14px;
+      margin-bottom: 15px;
       outline: none;
     }
-    .search-input:focus {
-      border-color: #2563eb;
-    }
+    /* الجدول */
     .table-container {
       overflow-x: auto;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      text-align: left;
+      text-align: right;
       font-size: 14px;
     }
     th {
@@ -61,32 +102,15 @@
       white-space: nowrap;
     }
     td {
-      padding: 8px 10px;
+      padding: 10px 12px;
       border-bottom: 1px solid #e2e8f0;
       color: #334155;
     }
     tr:nth-child(even) {
       background-color: #f8fafc;
     }
-    tr:hover {
-      background-color: #f1f5f9;
-    }
     .text-center {
       text-align: center;
-    }
-    /* Editable input fields styling inside table */
-    .table-input {
-      width: 100%;
-      padding: 6px 8px;
-      border: 1px solid #cbd5e1;
-      border-radius: 4px;
-      font-size: 13px;
-      background-color: #ffffff;
-    }
-    .table-input:focus {
-      border-color: #2563eb;
-      outline: none;
-      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
     }
     .badge {
       padding: 4px 8px;
@@ -97,137 +121,146 @@
     }
     .badge-active { background-color: #dcfce7; color: #166534; }
     .badge-maintenance { background-color: #fef3c7; color: #92400e; }
+    .btn-delete {
+      background-color: #ef4444;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <h1>IT Asset Inventory Management</h1>
-  
-  <div class="controls">
-    <input type="text" id="searchInput" class="search-input" placeholder="Search by name, ID, model, or serial..." onkeyup="filterTable()">
+  <h1>نظام إدارة الأجهزة والعهود</h1>
+
+  <!-- نموذج إضافة جهاز وموظف جديد -->
+  <div class="add-form">
+    <h2>إضافة عهدة جديدة</h2>
+    <form id="assetForm" onsubmit="addRecord(event)">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>الرقم الوظيفي (ID)</label>
+          <input type="text" id="empId" class="form-input" placeholder="E00001" required>
+        </div>
+        <div class="form-group">
+          <label>اسم الموظف</label>
+          <input type="text" id="empName" class="form-input" placeholder="اسم الموظف" required>
+        </div>
+        <div class="form-group">
+          <label>موديل اللابتوب</label>
+          <input type="text" id="laptopModel" class="form-input" list="laptop-models" placeholder="اختر أو اكتب الموديل...">
+        </div>
+        <div class="form-group">
+          <label>السيريال نمبر للابتوب</label>
+          <input type="text" id="laptopSerial" class="form-input" placeholder="اكتب السيريال...">
+        </div>
+        <div class="form-group">
+          <label>موديل الشاشة</label>
+          <input type="text" id="monitorModel" class="form-input" list="monitor-models" placeholder="اختر أو اكتب الموديل...">
+        </div>
+        <div class="form-group">
+          <label>السيريال نمبر للشاشة</label>
+          <input type="text" id="monitorSerial" class="form-input" placeholder="اكتب السيريال...">
+        </div>
+      </div>
+      <button type="submit" class="btn-add">إضافة إلى القائمة</button>
+    </form>
   </div>
 
+  <!-- خيار البحث -->
+  <input type="text" id="searchInput" class="search-input" placeholder="بحث بالاسم، الرقم الوظيفي، أو السيريال..." onkeyup="filterTable()">
+
+  <!-- الجدول -->
   <div class="table-container">
     <table id="assetTable">
       <thead>
         <tr>
-          <th class="text-center">ID</th>
-          <th>Employee Name</th>
-          <th>Laptop Model</th>
-          <th>Laptop Serial No.</th>
-          <th>Monitor Model</th>
-          <th>Monitor Serial No.</th>
-          <th class="text-center">Status</th>
+          <th class="text-center">الرقم الوظيفي</th>
+          <th>اسم الموظف</th>
+          <th class="text-center">موديل اللابتوب</th>
+          <th class="text-center">سيريال اللابتوب</th>
+          <th class="text-center">موديل الشاشة</th>
+          <th class="text-center">سيريال الشاشة</th>
+          <th class="text-center">الحالة</th>
+          <th class="text-center">إجراء</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td class="text-center">E00001</td>
-          <td>Ibrahim Al Majdouie</td>
-          <td><input type="text" class="table-input" list="laptop-models" value="Dell Latitude 5430" placeholder="Select or type model..."></td>
-          <td><input type="text" class="table-input" list="laptop-serials" value="SN-982314" placeholder="Select or type serial..."></td>
-          <td><input type="text" class="table-input" list="monitor-models" value="Dell P2419H" placeholder="Select or type model..."></td>
-          <td><input type="text" class="table-input" list="monitor-serials" value="MON-11234" placeholder="Select or type serial..."></td>
-          <td class="text-center"><span class="badge badge-active">Active</span></td>
-        </tr>
-        <tr>
-          <td class="text-center">E00002</td>
-          <td>Mahmood Alkooheji</td>
-          <td><input type="text" class="table-input" list="laptop-models" value="HP EliteBook 840" placeholder="Select or type model..."></td>
-          <td><input type="text" class="table-input" list="laptop-serials" value="SN-445129" placeholder="Select or type serial..."></td>
-          <td><input type="text" class="table-input" list="monitor-models" value="HP E24 G4" placeholder="Select or type model..."></td>
-          <td><input type="text" class="table-input" list="monitor-serials" value="MON-55921" placeholder="Select or type serial..."></td>
-          <td class="text-center"><span class="badge badge-active">Active</span></td>
-        </tr>
-        <tr>
-          <td class="text-center">E00003</td>
-          <td>Hasan AlBinmohamed</td>
-          <td><input type="text" class="table-input" list="laptop-models" value="Lenovo ThinkPad T14" placeholder="Select or type model..."></td>
-          <td><input type="text" class="table-input" list="laptop-serials" value="SN-881203" placeholder="Select or type serial..."></td>
-          <td><input type="text" class="table-input" list="monitor-models" value="Dell P2419H" placeholder="Select or type model..."></td>
-          <td><input type="text" class="table-input" list="monitor-serials" value="MON-11982" placeholder="Select or type serial..."></td>
-          <td class="text-center"><span class="badge badge-active">Active</span></td>
-        </tr>
-        <tr>
-          <td class="text-center">E00004</td>
-          <td>Yasser Alhulw</td>
-          <td><input type="text" class="table-input" list="laptop-models" value="MacBook Pro 14&quot;" placeholder="Select or type model..."></td>
-          <td><input type="text" class="table-input" list="laptop-serials" value="SN-332190" placeholder="Select or type serial..."></td>
-          <td><input type="text" class="table-input" list="monitor-models" value="LG UltraFine 27" placeholder="Select or type model..."></td>
-          <td><input type="text" class="table-input" list="monitor-serials" value="MON-99812" placeholder="Select or type serial..."></td>
-          <td class="text-center"><span class="badge badge-maintenance">Maintenance</span></td>
-        </tr>
+      <tbody id="tableBody">
+        <!-- يتم إدخال الصفوف هنا ديناميكياً -->
       </tbody>
     </table>
   </div>
 </div>
 
-<!-- ================= Predefined Lists ================= -->
-
-<!-- Laptop Models List -->
+<!-- اقتراحات موديلات اللابتوب -->
 <datalist id="laptop-models">
   <option value="Dell Latitude 5430">
   <option value="HP EliteBook 840 G8">
   <option value="Lenovo ThinkPad T14">
   <option value="MacBook Pro 14&quot;">
-  <option value="MacBook Air M2">
 </datalist>
 
-<!-- Laptop Serial Numbers List -->
-<datalist id="laptop-serials">
-  <option value="SN-982314">
-  <option value="SN-445129">
-  <option value="SN-881203">
-  <option value="SN-332190">
-  <option value="SN-776210">
-</datalist>
-
-<!-- Monitor Models List -->
+<!-- اقتراحات موديلات الشاشات -->
 <datalist id="monitor-models">
   <option value="Dell P2419H">
   <option value="HP E24 G4">
   <option value="LG UltraFine 27">
-  <option value="Samsung Odyssey G5">
 </datalist>
 
-<!-- Monitor Serial Numbers List -->
-<datalist id="monitor-serials">
-  <option value="MON-11234">
-  <option value="MON-55921">
-  <option value="MON-11982">
-  <option value="MON-99812">
-</datalist>
-
-<!-- Search Logic Script -->
 <script>
+  // إضافة صف جديد للجدول
+  function addRecord(event) {
+    event.preventDefault();
+
+    const id = document.getElementById("empId").value;
+    const name = document.getElementById("empName").value;
+    const laptopM = document.getElementById("laptopModel").value || "-";
+    const laptopS = document.getElementById("laptopSerial").value || "-";
+    const monitorM = document.getElementById("monitorModel").value || "-";
+    const monitorS = document.getElementById("monitorSerial").value || "-";
+
+    const tbody = document.getElementById("tableBody");
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+      <td class="text-center">${id}</td>
+      <td>${name}</td>
+      <td class="text-center">${laptopM}</td>
+      <td class="text-center">${laptopS}</td>
+      <td class="text-center">${monitorM}</td>
+      <td class="text-center">${monitorS}</td>
+      <td class="text-center"><span class="badge badge-active">نشط</span></td>
+      <td class="text-center"><button class="btn-delete" onclick="deleteRow(this)">حذف</button></td>
+    `;
+
+    tbody.appendChild(row);
+    document.getElementById("assetForm").reset();
+  }
+
+  // حذف صف
+  function deleteRow(btn) {
+    const row = btn.parentNode.parentNode;
+    row.parentNode.removeChild(row);
+  }
+
+  // فلترة وبحث بالجدول
   function filterTable() {
     const input = document.getElementById("searchInput").value.toUpperCase();
-    const table = document.getElementById("assetTable");
-    const trs = table.getElementsByTagName("tr");
+    const trs = document.getElementById("assetTable").getElementsByTagName("tr");
 
     for (let i = 1; i < trs.length; i++) {
-      let rowMatch = false;
-      const cells = trs[i].getElementsByTagName("td");
-
-      for (let j = 0; j < cells.length; j++) {
-        // Read either cell text or input field value
-        let cellValue = "";
-        const inputElem = cells[j].querySelector("input");
-        
-        if (inputElem) {
-          cellValue = inputElem.value;
-        } else {
-          cellValue = cells[j].textContent || cells[j].innerText;
-        }
-
-        if (cellValue.toUpperCase().indexOf(input) > -1) {
-          rowMatch = true;
+      let match = false;
+      const tds = trs[i].getElementsByTagName("td");
+      for (let j = 0; j < tds.length - 1; j++) {
+        if (tds[j] && tds[j].innerText.toUpperCase().indexOf(input) > -1) {
+          match = true;
           break;
         }
       }
-
-      trs[i].style.display = rowMatch ? "" : "none";
+      trs[i].style.display = match ? "" : "none";
     }
   }
 </script>
