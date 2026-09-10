@@ -39,6 +39,12 @@
             text-align: center;
         }
 
+        .header img.logo {
+            max-width: 150px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+
         .header h1 {
             font-size: 24px;
             font-weight: 700;
@@ -125,6 +131,11 @@
             transform: scale(0.99);
         }
 
+        .submit-btn:disabled {
+            background-color: #94a3b8;
+            cursor: not-allowed;
+        }
+
         /* Success Message Box */
         .success-message {
             display: none;
@@ -144,11 +155,12 @@
 
 <div class="container">
     <div class="header">
+        <img src="https://globalits.co.uk/wp-content/uploads/2024/11/54.png" alt="IT Logo" class="logo">
         <h1>IT Helpdesk Support</h1>
         <p>Please fill in the details below to submit your issue</p>
     </div>
 
-    <form class="form-body" id="ticketForm" action="https://formspree.io/f/xzebywbw" method="POST" enctype="multipart/form-data">
+    <form class="form-body" id="ticketForm">
         
         <!-- Email Input with Restriction -->
         <div class="form-group">
@@ -207,6 +219,53 @@
         </div>
     </form>
 </div>
+
+<script>
+    const form = document.getElementById('ticketForm');
+    const successMessage = document.getElementById('successMessage');
+    const submitBtn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // رابط n8n الخاص بك تم وضعه هنا مباشرة
+        const N8N_WEBHOOK_URL = 'https://husmajd11.app.n8n.cloud/webhook/it-support-ticket';
+
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Sending...';
+
+        const formData = {
+            email: document.getElementById('email').value,
+            category: document.getElementById('category').value,
+            priority: document.getElementById('priority').value,
+            description: document.getElementById('description').value,
+            submittedAt: new Date().toISOString()
+        };
+
+        try {
+            const response = await fetch(N8N_WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json' 
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+                successMessage.style.display = 'block';
+                form.reset();
+            } else {
+                alert('An error occurred while submitting the ticket. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Could not connect to the n8n server.');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = 'Submit Ticket';
+        }
+    });
+</script>
 
 </body>
 </html>
