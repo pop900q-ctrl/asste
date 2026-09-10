@@ -39,6 +39,15 @@
             text-align: center;
         }
 
+        /* تنسيق اللوجو */
+        .header img.logo {
+            max-width: 100px;
+            height: auto;
+            margin-bottom: 15px;
+            /* للتأكد من ظهور اللوجو الأبيض بوضوح على الخلفية الزرقاء */
+            filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.2)); 
+        }
+
         .header h1 {
             font-size: 24px;
             font-weight: 700;
@@ -144,6 +153,8 @@
 
 <div class="container">
     <div class="header">
+        <!-- إضافة اللوجو هنا -->
+        <img src="data:image/webp;base64,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" alt="IT Logo" class="logo">
         <h1>IT Helpdesk Support</h1>
         <p>Please fill in the details below to submit your issue</p>
     </div>
