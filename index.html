@@ -39,14 +39,6 @@
             text-align: center;
         }
 
-        /* تنسيق اللوجو الجديد */
-        .header img.logo {
-            max-width: 150px; /* تم زيادتها قليلاً لتناسب اللوجو الجديد */
-            height: auto;
-            margin-bottom: 15px;
-            /* تم إزالة الفلتر لأن اللوجو الجديد يمتلك خلفية بيضاء */
-        }
-
         .header h1 {
             font-size: 24px;
             font-weight: 700;
@@ -152,27 +144,28 @@
 
 <div class="container">
     <div class="header">
-        <!-- تم تحديث اللوجو هنا بالرابط الجديد -->
-        <img src="https://globalits.co.uk/wp-content/uploads/2024/11/54.png" alt="IT Logo" class="logo">
         <h1>IT Helpdesk Support</h1>
         <p>Please fill in the details below to submit your issue</p>
     </div>
 
-    <!-- تم تحديث رابط Formspree الخاص بك هنا -->
     <form class="form-body" id="ticketForm" action="https://formspree.io/f/xzebywbw" method="POST" enctype="multipart/form-data">
         
-        <!-- Email Input -->
+        <!-- Email Input with Restriction -->
         <div class="form-group">
             <label for="email">Work Email</label>
-            <!-- تأكد من وجود name="email" لضمان وصول البريد الإلكتروني -->
-            <input type="email" id="email" name="email" placeholder="name@company.com" required>
+            <input type="email" 
+                   id="email" 
+                   name="email" 
+                   placeholder="username@majd.sa" 
+                   required
+                   pattern=".+@majd\.sa"
+                   title="Please use your @majd.sa work email address.">
         </div>
 
         <!-- Category & Priority Row -->
         <div class="row">
             <div class="form-group">
                 <label for="category">Category</label>
-                <!-- تأكد من وجود name="category" -->
                 <select id="category" name="category" required>
                     <option value="" disabled selected>Select area</option>
                     <option value="Hardware">Hardware / PC</option>
@@ -185,7 +178,6 @@
 
             <div class="form-group">
                 <label for="priority">Priority</label>
-                <!-- تأكد من وجود name="priority" -->
                 <select id="priority" name="priority" required>
                     <option value="Low">Low</option>
                     <option value="Medium" selected>Medium</option>
@@ -197,43 +189,24 @@
         <!-- Issue Description -->
         <div class="form-group">
             <label for="description">Issue Description</label>
-            <!-- تأكد من وجود name="description" لضمان وصول وصف المشكلة -->
             <textarea id="description" name="description" placeholder="Describe the error or request in detail..." required></textarea>
         </div>
 
         <!-- File Attachment (Optional) -->
         <div class="form-group">
             <label for="attachment">Attachment (Screenshot/Log - Optional)</label>
-            <!-- تأكد من وجود name="attachment" لضمان وصول الملف المرفق -->
             <input type="file" id="attachment" name="attachment" accept="image/*,.pdf,.doc,.docx">
         </div>
 
         <!-- Submit Button -->
         <button type="submit" class="submit-btn" id="submitBtn">Submit Ticket</button>
 
-        <!-- Confirmation Alert (سيظهر تلقائيًا عند النجاح إذا كان مفعلًا في Formspree) -->
+        <!-- Confirmation Alert -->
         <div class="success-message" id="successMessage">
             ✅ Ticket submitted successfully! Our IT team will get back to you shortly.
         </div>
     </form>
 </div>
-
-<script>
-    // إذا كنت تستخدم Formspree فالدالة ستعمل تلقائياً. 
-    // الكود أدناه يعرض الرسالة تجريبياً بدون إنعاش الصفحة، يمكنك تفعيله إذا لزم الأمر.
-    
-    /* 
-    const form = document.getElementById('ticketForm');
-    const successMessage = document.getElementById('successMessage');
-
-    form.addEventListener('submit', function(e) {
-        // لمنع إنعاش الصفحة تلقائيًا بعد الإرسال، يمكنك فك تعليق الأسطر التالية:
-        // e.preventDefault();
-        // successMessage.style.display = 'block';
-        // form.reset();
-    });
-    */
-</script>
 
 </body>
 </html>
