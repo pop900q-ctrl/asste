@@ -1,519 +1,123 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IT Asset & Inventory Management System</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    body {
-      background-color: #f4f7f6;
-      margin: 0;
-      padding: 20px;
-    }
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      background: #ffffff;
-      padding: 25px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    }
-  h1, h2 {
-  color: #1e293b;
-  margin-top: 0;
-  text-align: center;
-}
-    /* Add Form Styling */
-    .add-form {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      padding: 20px;
-      border-radius: 8px;
-      margin-bottom: 25px;
-    }
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
-      margin-bottom: 15px;
-    }
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-    .form-group label {
-      font-size: 13px;
-      font-weight: 600;
-      color: #475569;
-    }
-    .form-input {
-      padding: 8px 12px;
-      border: 1px solid #cbd5e1;
-      border-radius: 6px;
-      font-size: 14px;
-      outline: none;
-    }
-    .form-input:focus {
-      border-color: #2563eb;
-    }
-    .form-input[readonly] {
-      background-color: #e2e8f0;
-      cursor: not-allowed;
-    }
-    .form-actions {
-      display: flex;
-      gap: 10px;
-    }
-    .btn-submit {
-      background-color: #2563eb;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 6px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .btn-submit:hover {
-      background-color: #1d4ed8;
-    }
-    .btn-update {
-      background-color: #16a34a !important;
-    }
-    .btn-update:hover {
-      background-color: #15803d !important;
-    }
-    .btn-cancel {
-      background-color: #64748b;
-      color: white;
-      border: none;
-      padding: 10px 18px;
-      border-radius: 6px;
-      font-weight: 600;
-      cursor: pointer;
-      display: none;
-    }
-    .btn-cancel:hover {
-      background-color: #475569;
-    }
-    
-    /* Toolbar (Search, Filter & Print) */
-    .toolbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .filter-container {
-      display: flex;
-      gap: 10px;
-      flex: 1;
-      max-width: 600px;
-    }
-    .search-input, .select-filter {
-      padding: 10px 14px;
-      border: 1px solid #cbd5e1;
-      border-radius: 6px;
-      font-size: 14px;
-      outline: none;
-    }
-    .search-input {
-      flex: 2;
-    }
-    .select-filter {
-      flex: 1;
-      background-color: #fff;
-    }
-    .btn-print {
-      background-color: #0f766e;
-      color: white;
-      border: none;
-      padding: 10px 18px;
-      border-radius: 6px;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: background 0.2s;
-    }
-    .btn-print:hover {
-      background-color: #0d9488;
-    }
-
-    /* Table Styling */
-    .table-container {
-      overflow-x: auto;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-      font-size: 14px;
-    }
-    th {
-      background-color: #1e293b;
-      color: #ffffff;
-      padding: 12px;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-    td {
-      padding: 10px 12px;
-      border-bottom: 1px solid #e2e8f0;
-      color: #334155;
-    }
-    tr:nth-child(even) {
-      background-color: #f8fafc;
-    }
-    .text-center {
-      text-align: center;
-    }
-    .badge {
-      padding: 4px 8px;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: 600;
-      display: inline-block;
-    }
-    .badge-active { background-color: #dcfce7; color: #166534; }
-    
-    /* Action Buttons inside Table */
-    .action-btns {
-      display: flex;
-      gap: 6px;
-      justify-content: center;
-    }
-    .btn-edit {
-      background-color: #f59e0b;
-      color: white;
-      border: none;
-      padding: 4px 8px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 12px;
-    }
-    .btn-edit:hover {
-      background-color: #d97706;
-    }
-    .btn-delete {
-      background-color: #ef4444;
-      color: white;
-      border: none;
-      padding: 4px 8px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 12px;
-    }
-    .btn-delete:hover {
-      background-color: #dc2626;
-    }
-
-    /* ================= Print CSS Settings ================= */
-    @media print {
-      body {
-        background-color: #ffffff;
-        padding: 0;
-      }
-      .container {
-        box-shadow: none;
-        padding: 0;
-        max-width: 100%;
-      }
-      .add-form, .toolbar, .no-print, th:last-child, td:last-child {
-        display: none !important;
-      }
-      table {
-        border: 1px solid #cbd5e1;
-      }
-      th {
-        background-color: #1e293b !important;
-        color: #ffffff !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الدعم الفني - تقديم تذكرة</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .ticket-card {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 450px;
+        }
+        .ticket-card h2 {
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        .form-group textarea {
+            resize: vertical;
+            height: 100px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .alert {
+            display: none;
+            padding: 10px;
+            margin-top: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .success { background-color: #d4edda; color: #155724; }
+    </style>
 </head>
 <body>
 
-<div class="container">
-  <h1>IT Asset & Inventory Management</h1>
+<div class="ticket-card">
+    <h2>تقديم تذكرة دعم فني (IT)</h2>
+    <form id="ticketForm">
+        <div class="form-group">
+            <label for="email">البريد الإلكتروني:</label>
+            <input type="email" id="email" required placeholder="example@company.com">
+        </div>
+        
+        <div class="form-group">
+            <label for="category">نوع المشكلة:</label>
+            <select id="category" required>
+                <option value="">اختر نوع المشكلة...</option>
+                <option value="hardware">أجهزة (كمبيوتر / طابعة)</option>
+                <option value="software">برامج وأنظمة</option>
+                <option value="network">الشبكة والإنترنت</option>
+                <option value="other">أخرى</option>
+            </select>
+        </div>
 
-  <!-- Form to Add/Edit Asset -->
-  <div class="add-form">
-    <h2 id="formTitle">Add New Asset Record</h2>
-    <form id="assetForm" onsubmit="handleFormSubmit(event)">
-      <div class="form-grid">
         <div class="form-group">
-          <label>Employee ID</label>
-          <input type="text" id="empId" class="form-input" placeholder="E00001" required>
+            <label for="description">وصف المشكلة:</label>
+            <textarea id="description" required placeholder="اشرح المشكلة بالتفصيل..."></textarea>
         </div>
-        <div class="form-group">
-          <label>Employee Name</label>
-          <input type="text" id="empName" class="form-input" placeholder="John Doe" required>
-        </div>
-        <div class="form-group">
-          <label>Laptop Model</label>
-          <input type="text" id="laptopModel" class="form-input" list="laptop-models" placeholder="Select or type model...">
-        </div>
-        <div class="form-group">
-          <label>Laptop Serial No.</label>
-          <input type="text" id="laptopSerial" class="form-input" placeholder="Type serial number...">
-        </div>
-        <div class="form-group">
-          <label>Monitor Model</label>
-          <input type="text" id="monitorModel" class="form-input" list="monitor-models" placeholder="Select or type model...">
-        </div>
-        <div class="form-group">
-          <label>Monitor Serial No.</label>
-          <input type="text" id="monitorSerial" class="form-input" placeholder="Type serial number...">
-        </div>
-        <div class="form-group">
-          <label>Start Date</label>
-          <input type="date" id="startDate" class="form-input" onchange="calculateExpiryDate()">
-        </div>
-        <div class="form-group">
-          <label>Expiry Date (+5 Years)</label>
-          <input type="date" id="expiryDate" class="form-input" readonly>
-        </div>
-      </div>
-      <div class="form-actions">
-        <button type="submit" id="submitBtn" class="btn-submit">Add to List</button>
-        <button type="button" id="cancelBtn" class="btn-cancel" onclick="resetFormState()">Cancel</button>
-      </div>
+
+        <button type="submit">إرسال التذكرة</button>
     </form>
-  </div>
-
-  <!-- Search, Filter & Print Controls -->
-  <div class="toolbar">
-    <div class="filter-container">
-      <input type="text" id="searchInput" class="search-input" placeholder="Search by name, ID, or serial..." onkeyup="filterTable()">
-      <select id="statusFilter" class="select-filter" onchange="filterTable()">
-        <option value="ALL">All Records</option>
-        <option value="ASSIGNED">With Laptop/Monitor</option>
-        <option value="NO_ASSET">No Asset Assigned</option>
-      </select>
-    </div>
-    <button class="btn-print" onclick="window.print()">
-      🖨️ Print Report
-    </button>
-  </div>
-
-  <!-- Table -->
-  <div class="table-container">
-    <table id="assetTable">
-      <thead>
-        <tr>
-          <th class="text-center">Employee ID</th>
-          <th>Employee Name</th>
-          <th class="text-center">Laptop Model</th>
-          <th class="text-center">Laptop Serial No.</th>
-          <th class="text-center">Monitor Model</th>
-          <th class="text-center">Monitor Serial No.</th>
-          <th class="text-center">Start Date</th>
-          <th class="text-center">Expiry Date</th>
-          <th class="text-center">Status</th>
-          <th class="text-center no-print">Action</th>
-        </tr>
-      </thead>
-      <tbody id="tableBody"></tbody>
-    </table>
-  </div>
+    
+    <div id="statusMessage" class="alert success">تم إرسال التذكرة بنجاح! سيرد عليك فريق الـ IT قريباً.</div>
 </div>
 
-<datalist id="laptop-models">
-  <option value="Dell Latitude 5430">
-  <option value="HP EliteBook 840 G8">
-  <option value="Lenovo ThinkPad T14">
-  <option value="MacBook Pro 14&quot;">
-</datalist>
-
-<datalist id="monitor-models">
-  <option value="Dell P2419H">
-  <option value="HP E24 G4">
-  <option value="LG UltraFine 27">
-</datalist>
-
 <script>
-  const initialData = [
-    { id: "E00001", name: "Ibrahim Al Majdouie", laptopM: "-", laptopS: "-", monitorM: "HP LCD ProDisplay P240va", monitorS: "CNK82600G6", startD: "", expiryD: "" },
-    { id: "E00002", name: "Mahmood Alkooheji", laptopM: "Lenovo ThinkCentre Neo 50A / Surface / iPad", laptopS: "MP2DQF58 / 0F00JHM23053BF", monitorM: "HP EliteDisplay E273m", monitorS: "CNC206134L", startD: "", expiryD: "" },
-    { id: "E00003", name: "Hasan AlBinmohamed", laptopM: "HP EliteBook 840", laptopS: "5CG014C8V4", monitorM: "HP LCD ProDisplay P240va", monitorS: "3CM1122YM7", startD: "", expiryD: "" },
-    { id: "E00004", name: "Yasser Alhulw", laptopM: "HP EliteBook 840", laptopS: "5CG90507WB", monitorM: "HP LCD ProDisplay P240va", monitorS: "3CM1122WTB", startD: "", expiryD: "" },
-    { id: "E00005", name: "Asad Abdul Jabbar", laptopM: "HP EliteBook 840 / Dell Latitude", laptopS: "5CG90507YQ / 31B6JX3", monitorM: "-", monitorS: "-", startD: "", expiryD: "" },
-    { id: "E00006", name: "Farouk Kewan", laptopM: "HP EliteBook 840", laptopS: "5CG31916L1", monitorM: "HP LCD ProDisplay P240va", monitorS: "CNK91000KW", startD: "", expiryD: "" },
-    { id: "E00007", name: "Othman Saeed Othman Almurisael", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", startD: "", expiryD: "" },
-    { id: "E00008", name: "Dilshan Punchihewa", laptopM: "-", laptopS: "-", monitorM: "-", monitorS: "-", startD: "", expiryD: "" },
-    { id: "E00009", name: "Adi AlShalabi", laptopM: "HP EliteBook 840", laptopS: "5CG0092FS3", monitorM: "HP E24 G4 FHD", monitorS: "CN41461XTL", startD: "", expiryD: "" },
-    { id: "E00010", name: "Hilal Alghamdi", laptopM: "HP ProBook 450", laptopS: "5CD01320GQ", monitorM: "HP ProDisplay P240va", monitorS: "3CM112305H", startD: "", expiryD: "" }
-  ];
+    document.getElementById('ticketForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // هنا يمكنك أخذ البيانات وإرسالها للباك إند (Backend) أو قاعدة البيانات
+        const email = document.getElementById('email').value;
+        const category = document.getElementById('category').value;
+        const description = document.getElementById('description').value;
 
-  let assets = JSON.parse(localStorage.getItem('assetsData_v2'));
-  if (!assets || assets.length === 0) {
-    assets = initialData;
-    localStorage.setItem('assetsData_v2', JSON.stringify(assets));
-  }
+        console.log("Ticket Data:", { email, category, description });
 
-  let editIndex = null;
-
-  document.addEventListener("DOMContentLoaded", renderTable);
-
-  function saveToStorage() {
-    localStorage.setItem('assetsData_v2', JSON.stringify(assets));
-  }
-
-  function calculateExpiryDate() {
-    const startDateInput = document.getElementById("startDate").value;
-    if (startDateInput) {
-      const date = new Date(startDateInput);
-      date.setFullYear(date.getFullYear() + 5);
-      
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      
-      document.getElementById("expiryDate").value = `${year}-${month}-${day}`;
-    } else {
-      document.getElementById("expiryDate").value = "";
-    }
-  }
-
-  function renderTable() {
-    const tbody = document.getElementById("tableBody");
-    tbody.innerHTML = "";
-
-    assets.forEach((item, index) => {
-      const row = document.createElement("tr");
-      row.setAttribute("data-index", index);
-      row.innerHTML = `
-        <td class="text-center">${item.id}</td>
-        <td>${item.name}</td>
-        <td class="text-center">${item.laptopM || "-"}</td>
-        <td class="text-center">${item.laptopS || "-"}</td>
-        <td class="text-center">${item.monitorM || "-"}</td>
-        <td class="text-center">${item.monitorS || "-"}</td>
-        <td class="text-center">${item.startD || "-"}</td>
-        <td class="text-center">${item.expiryD || "-"}</td>
-        <td class="text-center"><span class="badge badge-active">Active</span></td>
-        <td class="text-center no-print">
-          <div class="action-btns">
-            <button class="btn-edit" onclick="editRecord(${index})">Edit</button>
-            <button class="btn-delete" onclick="deleteRecord(${index})">Delete</button>
-          </div>
-        </td>
-      `;
-      tbody.appendChild(row);
+        // إظهار رسالة النجاح وتفريغ الحقول
+        document.getElementById('statusMessage').style.display = 'block';
+        this.reset();
     });
-    filterTable();
-  }
-
-  function handleFormSubmit(event) {
-    event.preventDefault();
-
-    const recordData = {
-      id: document.getElementById("empId").value,
-      name: document.getElementById("empName").value,
-      laptopM: document.getElementById("laptopModel").value || "-",
-      laptopS: document.getElementById("laptopSerial").value || "-",
-      monitorM: document.getElementById("monitorModel").value || "-",
-      monitorS: document.getElementById("monitorSerial").value || "-",
-      startD: document.getElementById("startDate").value || "-",
-      expiryD: document.getElementById("expiryDate").value || "-"
-    };
-
-    if (editIndex === null) {
-      assets.push(recordData);
-    } else {
-      assets[editIndex] = recordData;
-    }
-
-    saveToStorage();
-    renderTable();
-    resetFormState();
-  }
-
-  function editRecord(index) {
-    editIndex = index;
-    const item = assets[index];
-
-    document.getElementById("empId").value = item.id;
-    document.getElementById("empName").value = item.name;
-    document.getElementById("laptopModel").value = item.laptopM === "-" ? "" : item.laptopM;
-    document.getElementById("laptopSerial").value = item.laptopS === "-" ? "" : item.laptopS;
-    document.getElementById("monitorModel").value = item.monitorM === "-" ? "" : item.monitorM;
-    document.getElementById("monitorSerial").value = item.monitorS === "-" ? "" : item.monitorS;
-    document.getElementById("startDate").value = item.startD === "-" ? "" : item.startD;
-    document.getElementById("expiryDate").value = item.expiryD === "-" ? "" : item.expiryD;
-
-    document.getElementById("formTitle").innerText = "Edit Asset Record";
-    const submitBtn = document.getElementById("submitBtn");
-    submitBtn.innerText = "Update Record";
-    submitBtn.classList.add("btn-update");
-    document.getElementById("cancelBtn").style.display = "inline-block";
-
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  function resetFormState() {
-    editIndex = null;
-    document.getElementById("assetForm").reset();
-    document.getElementById("formTitle").innerText = "Add New Asset Record";
-    
-    const submitBtn = document.getElementById("submitBtn");
-    submitBtn.innerText = "Add to List";
-    submitBtn.classList.remove("btn-update");
-    document.getElementById("cancelBtn").style.display = "none";
-  }
-
-  function deleteRecord(index) {
-    if (confirm("Are you sure you want to delete this record?")) {
-      assets.splice(index, 1);
-      saveToStorage();
-      renderTable();
-      if (editIndex === index) resetFormState();
-    }
-  }
-
-  function filterTable() {
-    const searchVal = document.getElementById("searchInput").value.toUpperCase();
-    const filterVal = document.getElementById("statusFilter").value;
-    const trs = document.getElementById("tableBody").getElementsByTagName("tr");
-
-    for (let i = 0; i < trs.length; i++) {
-      const idx = trs[i].getAttribute("data-index");
-      const item = assets[idx];
-      
-      // Search Logic
-      let matchesSearch = false;
-      const tds = trs[i].getElementsByTagName("td");
-      for (let j = 0; j < tds.length - 2; j++) {
-        if (tds[j] && tds[j].innerText.toUpperCase().indexOf(searchVal) > -1) {
-          matchesSearch = true;
-          break;
-        }
-      }
-
-      // Filter Logic (Has asset vs No asset)
-      const hasLaptop = item.laptopM && item.laptopM !== "-";
-      const hasMonitor = item.monitorM && item.monitorM !== "-";
-      const hasAsset = hasLaptop || hasMonitor;
-
-      let matchesFilter = true;
-      if (filterVal === "ASSIGNED") matchesFilter = hasAsset;
-      if (filterVal === "NO_ASSET") matchesFilter = !hasAsset;
-
-      // Display or Hide
-      trs[i].style.display = (matchesSearch && matchesFilter) ? "" : "none";
-    }
-  }
 </script>
 
 </body>
